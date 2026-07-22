@@ -10,21 +10,15 @@ import time
 
 
 class RobotNode(Node):
-
+    """机器人节点"""
     def __init__(self):
         super().__init__("robot_node")
-
-
-        # 创建一个回调组
-        self.callback_group = ReentrantCallbackGroup()
-
-
+        self.callback_group = ReentrantCallbackGroup()  # 创建一个回调组
         self.timer = self.create_timer(
             1.0,
             self.control_callback,
             callback_group=self.callback_group
         )
-
 
         self.subscription = self.create_subscription(
             String,
@@ -34,9 +28,8 @@ class RobotNode(Node):
             callback_group=self.callback_group
         )
 
-
     def control_callback(self):
-
+        """节点控制回调"""
         self.get_logger().info(
             "控制电机"
         )
@@ -47,10 +40,9 @@ class RobotNode(Node):
             "电机控制完成"
         )
 
-
     # 另一个任务
     def sensor_callback(self,msg):
-
+        """传感器数据回调"""
         self.get_logger().info(
             "收到传感器:" + msg.data
         )
@@ -60,12 +52,10 @@ class RobotNode(Node):
 def main():
 
     rclpy.init()
-
     node = RobotNode()
 
     # 创建多线程执行器
     executor = MultiThreadedExecutor(num_threads=2)
-
     executor.add_node(node)
     executor.spin()
     node.destroy_node()
